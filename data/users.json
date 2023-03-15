@@ -1,0 +1,38 @@
+[
+  {
+    "id": "fac4544f376f52",
+    "email": "admin@dev.com",
+    "password": "$2a$12$5f2HUS3OdefxxKWO9pxRK.Tu/UOIWnoyl640minJOe7cmS6xLf/iq",
+    "firstName": "Admin",
+    "lastName": "smaTTa",
+    "address": "Nigeria",
+    "role": "ADMIN"
+  },
+  {
+    "id": "2c8fa2f16a0059",
+    "email": "test@test.com",
+    "password": "$2a$12$Lo5Y69Ud4HKLO7U82WK4EO/Zg8byHpNnV4vawUk3SNmLX5uDyogy.",
+    "firstName": "Test",
+    "lastName": "User",
+    "address": "earth",
+    "role": "USER"
+  },
+  {
+    "id": "84c7af12d81b53",
+    "email": "t@test.com",
+    "password": "$2a$12$VLpMXEuheEhEoRgffvQaG.E5vW6fduipxFmUW9vc./b4mnjpvSY1W",
+    "firstName": "User",
+    "lastName": "cacat",
+    "address": "Lagos",
+    "role": "USER"
+  },
+  {
+    "id": "d8c47942641b2c",
+    "email": "tet@gmail.com",
+    "password": "$2a$12$GDdo24yC/omHLNg9e1Oenenj.zwnoOHZhrkFmzqkBLl8WORlYqu3K",
+    "firstName": "Dogg",
+    "lastName": "john",
+    "address": "plot 21, uyo",
+    "role": "USER"
+  }
+]

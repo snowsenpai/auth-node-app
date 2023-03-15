@@ -1,0 +1,20 @@
+<%- include('partials/_head.ejs') %>
+</head>
+<body>
+    <%- include('partials/_nav.ejs') %>
+    <main>
+        <!-- link to update user profile GET /update_user -->
+        <% if (userData) { %>
+                <div class="centered">
+                    <h4>Email: <%= userData.email %></h4>
+                    <h4>First Name: <%= userData.firstName %></h4>
+                    <h4>Last Name: <%= userData.lastName %></h4>
+                    <h4>Address: <%= userData.address %></h4>
+                </div>
+                <h3><a href="/update_user/<%= userData.id %>">Update your profile here</a></h3>
+        <% } else { %>
+            <h1>No user found</h1>
+        <% }%>
+    </main>
+
+<%- include('partials/_footer.ejs') %>

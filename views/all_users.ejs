@@ -1,0 +1,24 @@
+<%- include('partials/_head.ejs') %>
+</head>
+<body>
+    <%- include('partials/_nav.ejs') %>
+    <main>
+        <% if (usersArray.length > 0) { %>
+                
+                <% usersArray.forEach(user => { %>
+                        <div class="centered">
+                            <h4>User's Email: <%= user.email %></h4>
+                            <h4>User's First Name: <%= user.firstName %></h4>
+                            <h4>User's Last Name: <%= user.lasName %></h4>
+                            <h4>User's Address: <%= user.address %></h4>
+                            <h4>User's Role: <%= user.role %></h4>
+                            <hr>
+                        </div>
+                        
+                <% }) %>
+        <% } else { %>
+            <h1>No users found</h1>
+        <% }%>
+    </main>
+
+<%- include('partials/_footer.ejs') %>

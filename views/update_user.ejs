@@ -1,0 +1,28 @@
+<%- include('partials/_head.ejs') %>
+</head>
+<body>
+    <%- include('partials/_nav.ejs') %>
+    <main>
+        <% if (validationErrorMessage) { %>
+                <h3 class="centered">Error: <%= validationErrorMessage %></h3>
+        <% } %>
+
+        <form action="/update_user" method="post">
+            <div class="centered">
+                <label for="address">Address</label>
+                <input type="text" name="updatedAddress" id="address" value="<%= user.address %>">
+            </div>   
+
+            <input type="hidden" name="email" value="<%= user.email %>">
+            <input type="hidden" name="firstName" value="<%= user.firstName %>">
+            <input type="hidden" name="lastName" value="<%= user.lastName %>">
+            <input type="hidden" name="userId" value="<%= user.id %>">
+            <input type="hidden" name="role" value="<%= user.role %>">
+            <input type="hidden" name="password" value="<%= user.password %>">
+            <div class="centered">
+                <button type="submit">Update Profile</button>
+            </div>
+        </form>
+    </main>
+
+<%- include('partials/_footer.ejs') %>

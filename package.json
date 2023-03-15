@@ -1,0 +1,23 @@
+{
+  "name": "dev-test",
+  "version": "1.0.0",
+  "description": "Node js Dev test",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "startDev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samuel Umoh",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-validator": "^6.15.0",
+    "jsonwebtoken": "^9.0.0",
+    "store2": "^2.14.2"
+  }
+}
