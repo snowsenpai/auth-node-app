@@ -1,7 +1,5 @@
 const { body } = require('express-validator');
 
-// describe validateion process
-
 module.exports ={
     validateSignUp:[
         body('email')
@@ -11,14 +9,13 @@ module.exports ={
         body('password','Password should be more than 5 characters')
             .isLength({min:5})
             .trim(),
-        body('confirmPassword','Password should match')
+        body('confirmPassword')
             .custom((value,{req}) =>{
                 if(value !== req.body.password){
-                    throw new Error('Password have to match');
+                    throw new Error('Passwords have to match');
                 }
                 return true
             })
-            .withMessage('Password should match')
             .trim(),
         body('firstName','First Name should have no special characters nor numbers and must be more than 3 characters')
             .isString()
@@ -42,7 +39,7 @@ module.exports ={
             .trim(),
     ],
     validateUserUpdate:[
-        body('updatedAddress','Address should not be empty')
+        body('address','Address should not be empty')
             .isLength({min:3})
             .trim()        
     ]

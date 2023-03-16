@@ -31,12 +31,16 @@ module.exports = class User{
 
     save(){
         getUsersFromCollection(users => {
-            // if this.id is set user already exists, else its a new user
+            // if this.id is set user already exists, else a new user
             if (this.id) {
                 const existingUserIndex = users.findIndex(user => user.id === this.id);
 
                 const existingUsers = [...users];
-                existingUsers[existingUserIndex] = this;
+                
+                // update address of a user document at a given array index
+                const updateUserAddress = {...existingUsers[existingUserIndex], address: this.address};
+
+                existingUsers[existingUserIndex] = updateUserAddress;
 
                 fileSystem.writeFile(pathToUsersCollection,
                     JSON.stringify(existingUsers,null,2),
@@ -68,21 +72,18 @@ module.exports = class User{
             }
         });
     }
-
-    // 
+    
     static fetchAllUsers(callBack){
         getUsersFromCollection(callBack);
     }
 
-    // 
     static findById(id, callBack){
         getUsersFromCollection(users => {
             const requestedUser = users.find(user => user.id === id);
             callBack(requestedUser);
         });
     }
-
-    // 
+ 
     static findByEmail(email, callBack){
         getUsersFromCollection(users => {
             const requestedUser = users.find(user => user.email === email);

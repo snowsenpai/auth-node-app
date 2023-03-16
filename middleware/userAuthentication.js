@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
-const store = require('store2');
 
 module.exports = (req, res, next) =>{
-    const token = store('userSession');
+    const token = req.body.token;
     if(!token){
         // user not logged in
-        return res.redirect('/login');
+        return res.status(401).json({
+            message:'Not Authorized!, please Login and use token in request body, if you don\'t have an account Signup'
+        });
     }
     let decodedToken;
     try {

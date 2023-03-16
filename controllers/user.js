@@ -1,74 +1,41 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const store  = require('store2');
 const {validationResult} = require('express-validator');
 
 const User = require('../models/user');
 
 exports.gethello = (req, res, next) => {
     // req.userId is set after a user successfully logs in
-    // user =>{} is the callback function used as an argument for each User:model method
-    // 
+    // user =>{} is the callback function used as an argument for each User:model static method 
     User.findById(req.userId,user =>{
-        if(user.role.toString() === 'ADMIN'){
-             return res.redirect('/all_users');
-        }
-        res.render('hello',{
-            pageTitle:'Hello',
-            userData:user
+        //create new user object without password
+        const {password, ...userDataNoPassword} = user;
+        res.status(200).json({
+            message:'User found',
+            userData:userDataNoPassword
         });
     });
 }
 
-exports.getSignup = (req, res, next) => {
-    res.render('signup',{
-        pageTitle:'Signup',
-        // persist user data
-        oldInputs:{
-            email:'',
-            password:'',
-            confirmPassword:'',
-            firstName:'',
-            lastName:'',
-            address:'',
-        },
-        validationErrorMessage:null
-    });
-}
-
 exports.postSignup = (req, res, next) => {
-    const {email, password,confirmPassword, address, firstName, lastName} = req.body;
+    const {email, password, address, firstName, lastName} = req.body;
     try {
         const errors = validationResult(req);
 
         if(!errors.isEmpty()){
-            return  res.render('signup',{
-                pageTitle:'Signup',
-                oldInputs:{
-                    email:email,
-                    password:password,
-                    confirmPassword:confirmPassword,
-                    firstName:firstName,
-                    lastName:lastName,
-                    address:address,
-                },
-                validationErrorMessage:errors.array()[0].msg
+            const validationErrorMessage = errors.array()[0].msg;
+
+            return res.status(422).json({
+                message:'Validation failed',
+                error:validationErrorMessage
             });
         }
         // check if email already exist
         User.findByEmail(email,async userDocument =>{
             if(userDocument){
-                return res.render('signup',{
-                    pageTitle:'Signup',
-                    oldInputs:{
-                        email:email,
-                        password:password,
-                        confirmPassword:confirmPassword,
-                        firstName:firstName,
-                        lastName:lastName,
-                        address:address,
-                    },
-                    validationErrorMessage:'Email already exist, use another'
+                return res.status(409).json({
+                    message:'Signup failed',
+                    error:'A user with this email already exist'
                 });
             }
             const hashedPassword = await bcrypt.hash(password, 12);
@@ -77,24 +44,13 @@ exports.postSignup = (req, res, next) => {
             const user = new User(null, email, hashedPassword,firstName, lastName, address, null);
 
             user.save();
-            res.redirect('/login');
+            res.status(201).json({
+                message:'User created, you can login'
+            });
         });
     } catch (error) {
         next(error)
     }  
-}
-
-exports.getLogin = (req, res, next) => {
-    // persist user data
-    res.render('login',{
-        pageTitle:'Login',
-        oldInputs:{
-            email:'',
-            password:''
-        },
-        validationErrorMessage:null
-        
-    });
 }
 
 exports.postLogin =  (req, res, next) => {
@@ -103,26 +59,20 @@ exports.postLogin =  (req, res, next) => {
         const errors = validationResult(req);
 
         if(!errors.isEmpty()){
-            return  res.render('login',{
-                pageTitle:'Login',
-                oldInputs:{
-                    email:email,
-                    password:password,
-                },
-                validationErrorMessage:errors.array()[0].msg
+            const validationErrorMessage = errors.array()[0].msg;
+
+            return res.status(422).json({
+                message:'Validation failed',
+                error:validationErrorMessage
             });
         }
 
         User.findByEmail(email, async user=>{
             // validate email, if user exist
             if (!user) {
-                return res.render('login',{
-                    pageTitle:'Login',
-                    oldInputs:{
-                        email:email,
-                        password:password,
-                    },
-                    validationErrorMessage:'Invalid email or password'
+                return res.status(422).json({
+                    message:'Login failed',
+                    error:'Invalid email or password, signup if you don\'t have an account'
                 });
             }
 
@@ -139,18 +89,17 @@ exports.postLogin =  (req, res, next) => {
                     process.env.JWT_SIGN,
                     {expiresIn:'1h'}
                 );
-
-                store('userSession', token);
-                return res.redirect('/');
+                // send json msg: logged in, use token for every request can view profile at '/'
+                return res.status(200).json({
+                    message:'Login successful, use attached \'token\' for future requests expires in 1 hour',
+                    token:token,
+                    guide:'token should be attached to request body'
+                });
             }
             // send error message for none match
-            return res.render('login',{
-                pageTitle:'Login',
-                oldInputs:{
-                    email:email,
-                    password:password,
-                },
-                validationErrorMessage:'Invalid email or password'
+            return res.status(422).json({
+                message:'Login failed',
+                error:'Invalid email or password, signup if you don\'t have an account'
             });
             
         });
@@ -159,45 +108,33 @@ exports.postLogin =  (req, res, next) => {
     }
 }
 
-exports.getUpdateUser = (req, res, next) => {
-    const userId = req.params.userId;
-    
-    User.findById(userId, userObject =>{
-        res.render('update_user',{
-            pageTitle:'Update User',
-            user:userObject,
-            validationErrorMessage:null
-        });
-    });
-}
-
 exports.postUpdateUser = (req, res, next) => {
-    const {userId, email, firstName, lastName, updatedAddress, role, password} = req.body;
+    const {address} = req.body;
     try {
         const errors = validationResult(req);
 
         if(!errors.isEmpty()){
-            return User.findById(userId, userObject =>{
-                return res.render('update_user',{
-                    pageTitle:'Update User',
-                    user:userObject,
-                    validationErrorMessage:errors.array()[0].msg
-                });
+            const validationErrorMessage = errors.array()[0].msg;
+
+            return res.status(422).json({
+                message:'Validation failed',
+                error:validationErrorMessage
             });
         }
-
+        // in model: find user by id and update address
         const updatedUser = new User(
-            userId,
-            email,
-            password,
-            firstName,
-            lastName,
-            updatedAddress,
-            role
+            req.userId,
+            null,
+            null,
+            null,
+            null,
+            address,
+            null
         );
         updatedUser.save();
-
-        res.redirect('/');
+        res.status(201).json({
+            message:'Address updated'
+        });
     } catch (error) {
         next(error)
     }
@@ -205,9 +142,11 @@ exports.postUpdateUser = (req, res, next) => {
 
 exports.getAllUsers = (req, res, next) => {
     User.fetchAllUsers(users =>{
-        res.render('all_users',{
-            pageTitle:'All Users',
-            usersArray:users
+        //create new users Array without password
+        const usersNoPassword = users.map( ({ password, ...otherFields }) => otherFields);
+        res.status(200).json({
+            message:'All users retrived successfully',
+            users:usersNoPassword
         });
     });
 }
