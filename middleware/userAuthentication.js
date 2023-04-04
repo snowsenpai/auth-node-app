@@ -12,7 +12,12 @@ module.exports = (req, res, next) =>{
     try {
         decodedToken = jwt.verify(token, process.env.JWT_SIGN);
     } catch (error) {
-        next(error);
+        throw error
+    }
+    if (!decodedToken) {
+        const error = new Error('Not authorized');
+        error.statusCode = 401;
+        return error
     }
     req.userId = decodedToken.userId;
     req.isLoggedIn = decodedToken.userLoggedIn;

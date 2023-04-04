@@ -34,5 +34,14 @@
     "lastName": "Haha",
     "address": "call back",
     "role": "USER"
+  },
+  {
+    "id": "65884e564828f2",
+    "email": "snow@snow.com",
+    "password": "$2a$12$3bh2b7d4SCf7ZJ52pZQvju7cDFSleVt3Ptr22f8flThdaBnHUtFLO",
+    "firstName": "Blyat",
+    "lastName": "Ahhhhha",
+    "address": "meeeeeeee",
+    "role": "USER"
   }
 ]
